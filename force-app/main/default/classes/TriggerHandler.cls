@@ -43,7 +43,7 @@ public virtual class TriggerHandler {
      ***************************************/
     
     // Main method that handles the trigger execution
-    public void run() {
+    public void run(List<SObject> newObjs) {
       
     
       // Check if the trigger should continue execution

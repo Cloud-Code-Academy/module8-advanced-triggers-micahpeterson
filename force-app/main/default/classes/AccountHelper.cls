@@ -26,21 +26,57 @@ Methods:
 Remember:
 Always ensure that your helper methods are bulk-safe to handle multiple records efficiently. 
 */
-public with sharing class AccountHelper {
+public with sharing class AccountHelper extends TriggerHandler{
     
-    public void setTypeProspect(SObject objects){
-
+    public void setTypeProspect(List<Account> newAccs){
+        for (Account acc : newAccs) {
+            if (acc.Type == null) {
+                acc.Type = 'Prospect';
+            }
+        }
     }
 
-    void addressCopy(){
+    public void addressCopy(List<Account> newAccs){
+        for (Account acc : newAccs) {
+            if (acc.ShippingStreet != null) {
+                acc.BillingStreet = acc.ShippingStreet;
+            }
 
+            if (acc.ShippingCity != null) {
+                acc.BillingCity = acc.ShippingCity;
+            }
+
+            if (acc.ShippingState != null) {
+                acc.BillingState = acc.ShippingState;
+            }
+
+            if (acc.ShippingPostalCode != null) {
+                acc.BillingPostalCode = acc.ShippingPostalCode;
+            }
+
+            if (acc.ShippingCountry != null) {
+                acc.BillingCountry = acc.ShippingCountry;
+            }
+        } 
     }
 
-    //[public | private ] [static] data_type setRating (input parameters) {
-    //  The body of the method
-    //}
+    public void setRating(List<Account> newAccs){
+        for (Account acc : newAccs) {
+            if (acc.Phone != null && acc.Website != null && acc.Fax != null) {
+                acc.Rating = 'Hot';
+            }
+        }
+    }
 
-    //[public | private ] [static] data_type defaultContact (input parameters) {
-    //  The body of the method
-    //}
+    public void defaultContact(List<Account> newAccs){
+        List<Contact> contacts = new List<Contact>();   
+        for(Account acc : newAccs){
+            Contact con = new Contact();
+            con.LastName = 'DefaultContact';
+            con.Email = 'default@email.com';
+            con.AccountId = acc.Id;
+            contacts.add(con);
+        }
+        insert contacts;
+    }
 }
